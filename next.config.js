@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // Hapus experimental.appDir jika ada
   experimental: {
-    appDir: true,
-  },
-};
+    // Hapus appDir dari sini
+  }
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
