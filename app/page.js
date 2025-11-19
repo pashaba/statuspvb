@@ -1,23 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 
-interface BotStatus {
-  botId: string;
-  status: string;
-  lastPing?: string;
-  lastCheck?: string;
-  diffSeconds?: number;
-}
-
 export default function Home() {
-  const [bots, setBots] = useState<BotStatus[]>([]);
-  const [updateTime, setUpdateTime] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [bots, setBots] = useState([]);
+  const [updateTime, setUpdateTime] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Statistik
-  const onlineBots = bots.filter(bot => bot.status.includes("Online")).length;
-  const offlineBots = bots.filter(bot => bot.status.includes("Offline")).length;
+  const onlineBots = bots.filter(bot => bot.status && bot.status.includes("Online")).length;
+  const offlineBots = bots.filter(bot => bot.status && bot.status.includes("Offline")).length;
   const totalBots = bots.length;
   const onlinePercentage = totalBots > 0 ? (onlineBots / totalBots) * 100 : 0;
 
@@ -27,7 +19,7 @@ export default function Home() {
     { status: 'Offline', count: offlineBots, color: '#ef4444' }
   ];
 
-  const formatDateTime = (dateString?: string): string => {
+  const formatDateTime = (dateString) => {
     if (!dateString) return "-";
     try {
       const date = new Date(dateString);
@@ -45,7 +37,7 @@ export default function Home() {
     }
   };
 
-  const getCurrentTime = (): string => {
+  const getCurrentTime = () => {
     return new Date().toLocaleString("id-ID", {
       timeZone: "Asia/Jakarta",
       weekday: 'long',
@@ -64,7 +56,7 @@ export default function Home() {
       setError(null);
       const res = await fetch("/api/heartbeat");
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const data: BotStatus[] = await res.json();
+      const data = await res.json();
       setBots(data);
       setUpdateTime(getCurrentTime());
     } catch (err) {
@@ -81,14 +73,15 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusColor = (status: string): string => {
+  const getStatusColor = (status) => {
+    if (!status) return "#6b7280";
     if (status.includes("Online")) return "#22c55e";
     if (status.includes("Offline")) return "#ef4444";
     if (status.includes("Error")) return "#f59e0b";
     return "#6b7280";
   };
 
-  const getDiffColor = (diffSeconds?: number): string => {
+  const getDiffColor = (diffSeconds) => {
     if (!diffSeconds) return "#6b7280";
     if (diffSeconds <= 10) return "#22c55e";
     if (diffSeconds <= 30) return "#f59e0b";
@@ -96,7 +89,7 @@ export default function Home() {
   };
 
   // Komponen Pie Chart sederhana
-  const PieChart = ({ data, size = 120 }: { data: { count: number; color: string }[]; size?: number }) => {
+  const PieChart = ({ data, size = 120 }) => {
     const total = data.reduce((sum, item) => sum + item.count, 0);
     let accumulatedAngle = 0;
 
@@ -455,7 +448,7 @@ export default function Home() {
                 ) : (
                   bots.map((bot, index) => (
                     <tr
-                      key={bot.botId}
+                      key={bot.botId || index}
                       style={{
                         backgroundColor: index % 2 ? "#f9fafb" : "white",
                         transition: "background-color 0.2s"
@@ -488,7 +481,7 @@ export default function Home() {
                             backgroundColor: getStatusColor(bot.status),
                             display: "inline-block"
                           }}></span>
-                          {bot.status}
+                          {bot.status || "Unknown"}
                         </span>
                       </td>
                       <td style={{ 
