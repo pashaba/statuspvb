@@ -96,14 +96,35 @@ export default function Home() {
   };
 
   // Komponen Pie Chart sederhana
-  const PieChart = ({ data, size = 120 }) => {
+  const PieChart = ({ data, size = 120 }: { data: { count: number; color: string }[]; size?: number }) => {
     const total = data.reduce((sum, item) => sum + item.count, 0);
     let accumulatedAngle = 0;
+
+    if (total === 0) {
+      return (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <circle cx={size/2} cy={size/2} r={size/2} fill="#e5e7eb" />
+          <text
+            x={size/2}
+            y={size/2}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize="14"
+            fontWeight="bold"
+            fill="#6b7280"
+          >
+            0
+          </text>
+        </svg>
+      );
+    }
 
     return (
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         {data.map((item, index) => {
-          const percentage = total > 0 ? item.count / total : 0;
+          if (item.count === 0) return null;
+          
+          const percentage = item.count / total;
           const angle = percentage * 360;
           const largeArcFlag = angle > 180 ? 1 : 0;
           
