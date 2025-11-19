@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Hapus experimental.appDir jika ada
-  experimental: {
-    // Hapus appDir dari sini
-  }
+  // Kosongkan atau hapus experimental.appDir
 }
 
 module.exports = nextConfig
