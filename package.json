@@ -1,0 +1,10 @@
+{
+  "name": "heartbeat-monitor",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "api/heartbeat.js",
+  "scripts": {
+    "start": "node api/heartbeat.js"
+  },
+  "dependencies": {}
+}
