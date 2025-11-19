@@ -1,24 +1,7 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/ping.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "routes": [
-    {
-      "src": "/api/ping",
-      "methods": ["GET", "POST", "OPTIONS"],
-      "dest": "/api/ping.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/pages/$1"
-    }
+    { "src": "/api/(.*)", "dest": "/api/heartbeat.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
